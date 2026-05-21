@@ -62,9 +62,31 @@ public class RssScheduler {
 
         log.info("신규 기사 저장 완료. {}건", newArticles.size());
 
+        // 기사는 총 1000건 제한
+        deleteOldArticlesIfExceed();
+
         // 4. @Async로 푸시 발송 넘기기
         pushProcessor.process(newArticles);
-
     }
+
+    private static final int MAX_ARTICLE_COUNT = 1000;
+
+    private void deleteOldArticlesIfExceed() {
+        long count = articleRepository.countAllBy();
+
+        if (count > MAX_ARTICLE_COUNT) {
+            long deleteCount = count - MAX_ARTICLE_COUNT;
+            List<Article> oldArticles = articleRepository
+                    .findAllByOrderByPubDateAsc();
+
+            List<Article> toDelete = oldArticles.stream()
+                    .limit(deleteCount)
+                    .collect(toList());
+
+            articleRepository.deleteAll(toDelete);
+            log.info("오래된 기사 {}건 삭제", deleteCount);
+        }
+    }
+
 
 }
