@@ -2,7 +2,7 @@ spring:
   application:
     name: newspush
   datasource:
-    url: jdbc:sqlite:app.db?journal_mode=WAL
+    url: jdbc:sqlite:app.db?journal_mode=WAL&busy_timeout=5000
     driver-class-name: org.sqlite.JDBC
     hikari:
       maximum-pool-size: 5
