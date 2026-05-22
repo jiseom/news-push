@@ -25,7 +25,7 @@ public class AsyncPushProcessor implements PushProcessor {
 
         for (Article article : articles) {
             List<UserCategory> matchedUsers =
-                    userCategoryRepository.findByCategory(article.getCategory());
+                    userCategoryRepository.findByCategoryWithUser(article.getCategory());
 
             log.info("기사={}, 매칭 유저={}명", article.getArticleId(),matchedUsers.size());
 

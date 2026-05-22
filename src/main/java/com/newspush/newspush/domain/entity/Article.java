@@ -1,6 +1,5 @@
 package com.newspush.newspush.domain.entity;
 
-import com.newspush.newspush.domain.enums.PushType;
 import com.newspush.newspush.domain.enums.RssCategory;
 import jakarta.persistence.*;
 import lombok.Builder;

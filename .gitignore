@@ -38,6 +38,8 @@ out/
 
 # DB 파일 (제출할 때는 따로 올려야 해서 일단 ignore)
 *.db
+*.db-shm
+*.db-wal
 
 # 로그
 *.log
@@ -46,3 +48,4 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+

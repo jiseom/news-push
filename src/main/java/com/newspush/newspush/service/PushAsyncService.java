@@ -18,7 +18,7 @@ public class PushAsyncService {
     private final PushLogRepository pushLogRepository;
     private final DndPolicy dndPolicy;
 
-    @Async("pushExecutor")
+//    @Async("pushExecutor")
     public void send(User user, Article article) {
         //DND 체크
         if (dndPolicy.isBlocked(user.getDndTime())) {
@@ -59,6 +59,7 @@ public class PushAsyncService {
                 .title(article.getTitle())
                 .category(article.getCategory().name())
                 .status(result)
+                .failReason("fail".equals(result) ? "발송 실패" : null)
                 .build();
 
         pushLogRepository.save(pushLog);

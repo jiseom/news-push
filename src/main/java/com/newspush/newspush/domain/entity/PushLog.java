@@ -52,7 +52,7 @@ public class PushLog {
 
     @Builder
     public PushLog(Long userId, String deviceId, PushType pushType, String articleId,
-                   String title, String category, String status) {
+                   String title, String category, String status, String failReason) {
         this.userId = userId;
         this.deviceId = deviceId;
         this.pushType = pushType;
@@ -60,6 +60,7 @@ public class PushLog {
         this.title = title;
         this.category = category;
         this.status = status;
+        this.failReason = failReason;
     }
 
 }
