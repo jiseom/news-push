@@ -36,8 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 
-# DB 파일 (제출할 때는 따로 올려야 해서 일단 ignore)
-*.db
+# DB 파일
 *.db-shm
 *.db-wal
 
