@@ -3,6 +3,7 @@ package com.newspush.newspush.scheduler;
 import com.newspush.newspush.domain.entity.Article;
 import com.newspush.newspush.domain.enums.RssCategory;
 import com.newspush.newspush.repository.ArticleRepository;
+import com.newspush.newspush.repository.UserArticleReadRepository;
 import com.newspush.newspush.service.PushProcessor;
 import com.newspush.newspush.service.RssCollector;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class RssScheduler {
 
     private final RssCollector rssCollector;
     private final ArticleRepository articleRepository;
+    private final UserArticleReadRepository userArticleReadRepository;
     private final PushProcessor pushProcessor;
     private final @Qualifier("rssExecutor") Executor rssExecutor;
 
@@ -48,17 +50,14 @@ public class RssScheduler {
         log.info("RSS 수집 완료. 총 {}건", articles.size());
 
         // 3. 신규 기사만 저장
+        List<String> existingIds = articleRepository.findAllArticleIds(); // 기존 ID 목록
         List<Article> newArticles = articles.stream()
-                .filter(article -> {
-                    try {
-                        articleRepository.save(article);
-                        return true;
-                    } catch (DataIntegrityViolationException e) {
-                        log.info("이미 저장된 기사: {}", article.getArticleId());
-                        return false;
-                    }
-                })
+                .filter(a -> !existingIds.contains(a.getArticleId()))
                 .collect(toList());
+
+        articleRepository.saveAll(newArticles);
+        log.info("신규 기사 저장 완료. {}건", newArticles.size());
+
 
         log.info("신규 기사 저장 완료. {}건", newArticles.size());
 
@@ -83,10 +82,19 @@ public class RssScheduler {
                     .limit(deleteCount)
                     .collect(toList());
 
+            //읽음 여부 저장 삭제
+            deleteRelatedReadHistory(toDelete);
+
             articleRepository.deleteAll(toDelete);
             log.info("오래된 기사 {}건 삭제", deleteCount);
         }
     }
 
+    private void deleteRelatedReadHistory(List<Article> articles) {
+        List<String> ids = articles.stream()
+                .map(Article::getArticleId)
+                .collect(toList());
+        userArticleReadRepository.deleteByArticleIdIn(ids);
+    }
 
 }

@@ -16,7 +16,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -35,6 +37,8 @@ public class ExcelDataLoader implements ApplicationListener<ApplicationReadyEven
                 new ClassPathResource("users.xlsx").getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
 
+            List<User> users = new ArrayList<>();
+
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue;
 
@@ -51,9 +55,10 @@ public class ExcelDataLoader implements ApplicationListener<ApplicationReadyEven
                         .map(String::trim)
                         .map(RssCategory::valueOf)
                         .forEach(user::addCategory);
-
-                userRepository.save(user);
+                users.add(user);
             }
+
+            userRepository.saveAll(users);
             log.info("유저 데이터 로딩 완료.");
 
         } catch (Exception e) {
