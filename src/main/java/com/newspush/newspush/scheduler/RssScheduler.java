@@ -57,9 +57,6 @@ public class RssScheduler {
         articleRepository.saveAll(newArticles);
         log.info("신규 기사 저장 완료. {}건", newArticles.size());
 
-
-        log.info("신규 기사 저장 완료. {}건", newArticles.size());
-
         // 기사는 총 1000건 제한
         deleteOldArticlesIfExceed();
 
